@@ -26,12 +26,12 @@ class Page {
         const user = await userFactory();
         await this.page.setCookie(...sessionFactory(user));
 
-        await this.page.goto('localhost:3000');
+        await this.page.goto('localhost:3000/blogs');
         await this.page.waitFor('a[href="/auth/logout"]')
     }
 
-    async getQuerySelector(selector) {
-        return this.page.$eval(selector, el => el.innerHTML)
+    async getContentsOf(selector) {
+        return this.page.$eval(selector, el => el.innerHTML);
     }
 }
 

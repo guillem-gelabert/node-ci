@@ -14,7 +14,7 @@ describe("header", () => {
     });
 
     test('the header has the correct test', async () => {
-        const text = await page.getQuerySelector('a.brand-logo');
+        const text = await page.getContentsOf('a.brand-logo');
 
         expect(text).toEqual('Blogster');
     });
@@ -27,7 +27,7 @@ describe("header", () => {
 
     test('when signed in shows logout button', async () => {
         await page.login();
-        const text = await page.getQuerySelector('a[href="/auth/logout"]');
+        const text = await page.getContentsOf('a[href="/auth/logout"]');
 
         expect(text).toEqual('Logout');
     });
