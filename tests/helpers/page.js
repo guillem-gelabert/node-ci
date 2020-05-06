@@ -33,6 +33,36 @@ class Page {
     async getContentsOf(selector) {
         return this.page.$eval(selector, el => el.innerHTML);
     }
+
+    get(path) {
+        const getBlogs = (_path) => fetch(_path, {
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json"
+            },
+        }).then(res => res.json());
+
+        return this.page.evaluate(getBlogs, path);
+    }
+
+    post(path, body) {
+        const postBlogs = (_path, _body) => fetch(_path, {
+            method: "POST",
+            credentials: "same-origin",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(_body),
+        }).then(res => res.json());
+
+        return this.page.evaluate(postBlogs, path, body);
+    }
+
+    execRequests(actions) {
+        return Promise.all(
+            actions.map((action) => this[action.method](action.path, action.data))
+        )
+    }
 }
 
 module.exports = Page;

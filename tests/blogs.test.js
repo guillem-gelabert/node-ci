@@ -1,5 +1,7 @@
 const Page = require("./helpers/page");
+
 let page;
+
 beforeEach(async () => {
     page = await Page.build()
     await page.goto('localhost:3000');
@@ -54,4 +56,33 @@ describe("When logged in", () => {
             expect(contentError).toBe("You must provide a value");
         });
     });
+});
+
+describe("When user is not logged in", () => {
+    afterEach(async () => {
+        await page.close();
+    });
+
+    test("Blog related actions are prohibited", async () => {
+        const actions = [
+            {
+                method: "get",
+                path: "/api/blogs"
+            },
+            {
+                method: "post",
+                path: "/api/blogs",
+                data: {
+                    title: "My Title",
+                    content: "My Content"
+                }
+            }
+        ]
+        const results = await page.execRequests(actions);
+        for (result of results) {
+            expect(result).toEqual({
+                "error": "You must log in!",
+            });
+        }
+    })
 });
