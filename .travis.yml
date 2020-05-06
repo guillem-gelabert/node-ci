@@ -19,4 +19,4 @@ install:
 script:
   - nohup npm run start &
   - sleep 3
-  - npm run test --runInBand --detectOpenHandles --forceExit
+  - npm run test
