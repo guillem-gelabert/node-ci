@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const redis = require("redis");
-const client = redis.createClient();
+
+const keys = require("../config/keys");
+const client = redis.createClient(keys.redisUrl);
 
 const { promisify } = require("util");
 const getHashAsync = promisify(client.hget).bind(client);
@@ -29,11 +31,9 @@ mongoose.Query.prototype.exec = async function () {
     const document = JSON.parse(cachedValue);
 
     if (document) {
-        console.log("serving cache", this.mongooseCollection.name);
         return document;
     };
 
-    console.log("serving mongo")
     const blogs = await exec.apply(this, arguments);
     client.hset(this.hashKey, key, JSON.stringify(blogs));
     return blogs;
@@ -41,7 +41,6 @@ mongoose.Query.prototype.exec = async function () {
 
 module.exports = {
     clearHash(hashKey) {
-        console.log("clearing");
         client.del(JSON.stringify(hashKey));
     }
 }
